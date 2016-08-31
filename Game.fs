@@ -181,3 +181,71 @@ let displayResult result =
     match result with
     | Success s -> printf "%s" s
     | Failure f -> printf "%s" f
+
+type GameEvent =
+    | UpdateState of (World -> Result<World, string>)
+    | ResetState of World
+    | EndGameLoop
+
+let applyUpdate updateFunc worldState =
+    match updateFunc worldState with
+    | Success newState ->
+        describeCurrentRoom newState |> displayResult
+        newState
+    | Failure message ->
+        printfn "\n\n%s\n" message
+        worldState
+
+type GameEngine(initialState: World) =
+    let gameLoop =
+        MailboxProcessor.Start(fun inbox ->
+            let rec innerLoop worldState =
+                async {
+                    let! eventMsg = inbox.Receive()
+                    match eventMsg with
+                    | UpdateState updateFunc -> return! innerLoop (applyUpdate updateFunc worldState)
+                    | ResetState newState -> return! innerLoop newState
+                    | EndGameLoop -> return ()
+                }
+                
+            innerLoop initialState)
+
+    member this.ApplyUpdate(updateFunc) =
+        gameLoop.Post(UpdateState updateFunc)
+
+    member this.ResetState(newState) =
+        gameLoop.Post(ResetState newState)
+
+    member this.Stop() =
+        gameLoop.Post(EndGameLoop)
+
+let gameEngine = GameEngine(gameWorld)
+gameEngine.ApplyUpdate(move south)
+
+let rand = System.Random()
+let playerController =
+    MailboxProcessor.Start(fun inbox ->
+        let rec innerLoop state =
+            async {
+                try
+                    let! eventMsg = inbox.Receive(2000)
+                    if eventMsg = "Stop" then return ()
+                with
+                | :? System.TimeoutException -> 
+                    ["north", north
+                     "south", south
+                     "east", east
+                     "west", west]
+                    |> List.item (rand.Next 4)
+                    |> fun (dir, dirFunc) -> printfn "Wandering %s..." dir; dirFunc
+                    |> move
+                    |> gameEngine.ApplyUpdate
+
+                    do! innerLoop state
+            }
+        
+        innerLoop 0)
+
+gameEngine.ResetState(gameWorld)
+
+playerController.Post("Stop")
