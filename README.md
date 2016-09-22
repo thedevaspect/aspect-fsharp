@@ -15,6 +15,7 @@ code.  Here is the current list of branches for each part of the show:
 
 - **Episode 005** - [Parsing Text with Combinators, F# Part 5](https://youtu.be/ARJB8eDyxrg)
   - [part-5-initial](https://github.com/thedevaspect/aspect-fsharp/tree/part-5-initial)
+  - [part-5-final](https://github.com/thedevaspect/aspect-fsharp/tree/part-5-final)
 
 ## Cloning the Code
 
