@@ -13,6 +13,9 @@ code.  Here is the current list of branches for each part of the show:
   - [part-4-initial](https://github.com/thedevaspect/aspect-fsharp/tree/part-4-initial)
   - [part-4-final](https://github.com/thedevaspect/aspect-fsharp/tree/part-4-final)
 
+- **Episode 005** - [Parsing Text with Combinators, F# Part 5](https://youtu.be/ARJB8eDyxrg)
+  - [part-5-initial](https://github.com/thedevaspect/aspect-fsharp/tree/part-5-initial)
+
 ## Cloning the Code
 
 You have two options for cloning the code for an episode:

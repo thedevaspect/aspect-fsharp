@@ -220,32 +220,8 @@ type GameEngine(initialState: World) =
         gameLoop.Post(EndGameLoop)
 
 let gameEngine = GameEngine(gameWorld)
-gameEngine.ApplyUpdate(move south)
 
-let rand = System.Random()
-let playerController =
-    MailboxProcessor.Start(fun inbox ->
-        let rec innerLoop state =
-            async {
-                try
-                    let! eventMsg = inbox.Receive(2000)
-                    if eventMsg = "Stop" then return ()
-                with
-                | :? System.TimeoutException -> 
-                    ["north", north
-                     "south", south
-                     "east", east
-                     "west", west]
-                    |> List.item (rand.Next 4)
-                    |> fun (dir, dirFunc) -> printfn "Wandering %s..." dir; dirFunc
-                    |> move
-                    |> gameEngine.ApplyUpdate
+//
+// --------- Command Parsing --------- 
+//
 
-                    do! innerLoop state
-            }
-        
-        innerLoop 0)
-
-gameEngine.ResetState(gameWorld)
-
-playerController.Post("Stop")
