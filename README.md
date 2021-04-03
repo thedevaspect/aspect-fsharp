@@ -1,7 +1,7 @@
 # aspect-fsharp
 
 This repository contains the "Aspect" game project for the YouTube show
-[the_dev_aspect](http://youtube.com/c/thedevaspect) written in F#.
+[the_dev_aspect](https://youtube.com/channel/UCAiiOTio8Yu69c3XnR7nQBQ) written in F#.
 
 ## Episode Branches
 
